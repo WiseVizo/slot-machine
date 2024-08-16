@@ -35,5 +35,40 @@ const getBetAmount = (balance, numLines)=>{
     }
 }
 
+const spin = ()=>{
+    const symbols = []
+    for (const[symbol, count] of Object.entries(SYMBOLS_PER_SLOT)) {
+        for(let i=0; i<count; i++){
+            symbols.push(symbol)
+        }    
+    }
+    const reelsArray = [[], [], []]
+    for(let i=0; i<ROWS; i++){
+        const reelsSymbols = [...symbols]
+        for(let j=0; j<COLS; j++){
+            const randomIndex = Math.floor(Math.random() * reelsSymbols.length)
+            const selectedSymbol = reelsSymbols[randomIndex]
+            reelsArray[i].push(selectedSymbol)
+            reelsSymbols.splice(randomIndex, 1) // index , num items to remove
+        }
+    }
+    console.log(reelsArray)
+}
 
-console.log(getBetAmount(getDepositAmount(), getNumberOfLines()))
+const ROWS = 3
+const COLS = 3
+
+const SYMBOLS_PER_SLOT = { // possible symbols in any given slot and their count
+    "A":2,
+    "B":3,
+    "C":4,
+    "D":5,
+}
+
+const SYMBOLS_VALUE =  {
+    "A":5,
+    "B":4,
+    "C":3,
+    "D":2,
+}
+spin()
