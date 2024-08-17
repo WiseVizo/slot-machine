@@ -52,7 +52,49 @@ const spin = ()=>{
             reelsSymbols.splice(randomIndex, 1) // index , num items to remove
         }
     }
-    console.log(reelsArray)
+    return reelsArray
+}
+
+const transpose = (reels)=>{
+    const rows = []
+    for(let i=0; i<ROWS; i++){
+        rows.push([])
+        for(let j=0; j<COLS; j++){
+            rows[i].push(reels[j][i])
+        }
+    }
+    return rows
+}
+
+const printRows = (rowReels)=>{
+    for(const row of rowReels){
+        let rowString = ""
+        for(const [index, symbol] of row.entries()){
+            rowString += symbol
+            if(index!=rowReels.length-1){
+                rowString += " | "
+            }
+        }
+        console.log(rowString)
+    }
+}
+
+const getWinnings = (rowReels, bet, lines)=>{
+    let winnings = 0
+    for(let i=0; i<lines; i++){
+        const symbols = rowReels[i]
+        let allSame = true
+        for(let j=1; j<ROWS; j++){
+            if (symbols[0]!=symbols[j]){
+                allSame = false
+                break
+            }
+        }
+        if(allSame){
+            winnings += bet * SYMBOLS_VALUE[symbols[0]]
+        }
+    }
+    return winnings
 }
 
 const ROWS = 3
@@ -71,4 +113,31 @@ const SYMBOLS_VALUE =  {
     "C":3,
     "D":2,
 }
-spin()
+
+const game = (balance)=>{
+    while (true){
+        
+        lines = getNumberOfLines()
+        bet = getBetAmount(balance, lines)
+        balance -= bet * lines
+        const reels = spin()
+        const rowReels = transpose(reels)
+        printRows(rowReels)
+        winnings = getWinnings(rowReels, bet, lines)
+        balance += winnings
+        console.log("you won "+winnings)
+        console.log("current balace: "+ balance)
+        if (balance<=0){
+            console.log("you have successfully gambled away all ur money byee")
+            break
+       }
+       const response = prompt("do u wish to continue?(y/n): ")
+       if(response!="y" && response!="Y"){
+        console.log("have a great day")
+        break
+       }
+    }
+}
+
+balance = getDepositAmount()
+game(balance)
